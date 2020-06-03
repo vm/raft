@@ -54,42 +54,42 @@ def run_test(filename, description, log=None):
                                                         stats.duplicates,
                                                         stats.mean_latency, stats.median_latency))
 
-        print '\t%-60s\t[PASS]\tPerformance Tiers:' % (description),
+        print('\t%-60s\t[PASS]\tPerformance Tiers:' % (description))
         for t in perf:
-            print ' %i' % (t)
-        print ''
+            print(' %i' % (t))
+        print('')
     else:
-        print '\t%-60s\t[FAIL]' % (description)
+        print('\t%-60s\t[FAIL]' % (description))
 
     return passed
 
 trials = []
 
-print 'Basic tests:'
+print('Basic tests:')
 trials.append(run_test('simple-1.json', 'No drops, no failures, 80% read'))
 trials.append(run_test('simple-2.json', 'No drops, no failures, 20% read'))
 
-print 'Unreliable network tests:'
+print('Unreliable network tests:')
 trials.append(run_test('unreliable-1.json', '5% drops, no failures, 20% read'))
 trials.append(run_test('unreliable-2.json', '10% drops, no failures, 20% read'))
 trials.append(run_test('unreliable-3.json', '15% drops, no failures, 20% read'))
 
-print 'Crash failure tests:'
+print('Crash failure tests:')
 trials.append(run_test('crash-1.json', 'No drops, 1 replica failure, 20% read'))
 trials.append(run_test('crash-2.json', 'No drops, 2 replica failures, 20% read'))
 trials.append(run_test('crash-3.json', 'No drops, 1 leader failure, 20% read'))
 trials.append(run_test('crash-4.json', 'No drops, 2 leader failures, 20% read'))
 
-print 'Partition tests:'
+print('Partition tests:')
 trials.append(run_test('partition-1.json', 'No drops, 1 easy partition, 20% read'))
 trials.append(run_test('partition-2.json', 'No drops, 2 easy partitions, 20% read'))
 trials.append(run_test('partition-3.json', 'No drops, 1 hard partition, 20% read'))
 trials.append(run_test('partition-4.json', 'No drops, 2 hard partitions, 20% read'))
 
-print 'Advanced tests:'
+print('Advanced tests:')
 trials.append(run_test('advanced-1.json', '10% drops, 2 hard partitions and 1 leader failures, 20% read'))
 trials.append(run_test('advanced-2.json', '15% drops, 2 leader failures, 20% read'))
 trials.append(run_test('advanced-3.json', '50% drops, 1 leader failure, 20% read'))
 trials.append(run_test('advanced-4.json', '10% drops, 3 hard partions and 1 leader kill, 20% read'))
 
-print 'Passed', len(filter(None, trials)), 'out of', len(trials), 'tests'
+print('Passed', len([_f for _f in trials if _f]), 'out of', len(trials), 'tests')

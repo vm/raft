@@ -31,19 +31,19 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def bold(s):
-    print bcolors.BOLD + bcolors.UNDERLINE + s + bcolors.ENDC
+    print(bcolors.BOLD + bcolors.UNDERLINE + s + bcolors.ENDC)
 
 def fail(s):
-    print bcolors.FAIL + s + bcolors.ENDC
+    print(bcolors.FAIL + s + bcolors.ENDC)
 
 def ok(s):
-    print bcolors.OKGREEN + s + bcolors.ENDC
+    print(bcolors.OKGREEN + s + bcolors.ENDC)
 
 def win(s):
-    print bcolors.OKBLUE + s + bcolors.ENDC
+    print(bcolors.OKBLUE + s + bcolors.ENDC)
 
 def warn(s):
-    print bcolors.WARNING + s + bcolors.ENDC
+    print(bcolors.WARNING + s + bcolors.ENDC)
 
 #######################################################################################################
 
@@ -111,7 +111,7 @@ class Config:
                                                    'Fraction of appends that may be batched must be between 0 and 1 (default: %f)' % (APPENDS_BATCHED_FRAC))
 
         self.benchmarks = {}
-        for test, tiers in conf['tests']['benchmarks'].iteritems():
+        for test, tiers in conf['tests']['benchmarks'].items():
             if len(tiers) != 3:
                 raise ValueError("Incorrect number of performance tiers in test %s. len(tiers) = %i" % (test, len(tiers)))
             if not all([type(t) == float or type(t) == int for t in tiers]):
@@ -130,7 +130,7 @@ class Config:
         return temp
 
     def dump(self):
-        print ('%8s %s\n' * 13) % ('Lifetime', self.lifetime, 'Replicas', self.replicas,
+        print(('%8s %s\n' * 13) % ('Lifetime', self.lifetime, 'Replicas', self.replicas,
                                   'Requests', self.requests, 'Seed', self.seed,
                                   'Mix', self.mix, 'Start Wait', self.start_wait,
                                   'End Wait', self.end_wait, 'Drops', self.drops,
@@ -138,13 +138,13 @@ class Config:
                                   'Maximum Get Fail Fraction', self.max_get_frac,
                                   'Maximum Put Fail Fraction', self.max_put_frac,
                                   'Maximum Get Generation Failure Fraction', self.max_get_fail_frac,
-                                  'Append Batching Fraction', self.app_batch_frac)
+                                  'Append Batching Fraction', self.app_batch_frac))
 
         for event in self.events:
-            print '%8s %15s %s' % ('Event', event['type'], event['time'])
+            print('%8s %15s %s' % ('Event', event['type'], event['time']))
 
         for test, tiers in self.benchmarks:
-            print '%16s %s' % (test, str(tiers))
+            print('%16s %s' % (test, str(tiers)))
 
 #######################################################################################################
 
@@ -190,19 +190,19 @@ class Stats:
             self.median_latency = self.latencies[len(self.latencies)/2]
 
     def dump(self):
-        print 'Leaders:', ' '.join(self.leaders)
-        print 'Replicas that died/were killed: %i/%i' % (self.died, self.killed)
-        print 'Total messages sent:', self.total_msgs
-        print 'Total messages dropped:', self.total_drops
-        print 'Total client get()/put() requests: %i/%i' % (self.total_get, self.total_put)
-        print 'Total duplicate responses:', self.duplicates
-        print 'Total unanswered get()/put() requests: %i/%i' % (self.unanswered_get, self.unanswered_put)
-        print 'Total redirects:', self.redirects
-        print 'Total get()/put() failures: %i/%i' % (self.failed_get, self.failed_put)
-        print 'Total get() with incorrect response:', self.incorrect
+        print('Leaders:', ' '.join(self.leaders))
+        print('Replicas that died/were killed: %i/%i' % (self.died, self.killed))
+        print('Total messages sent:', self.total_msgs)
+        print('Total messages dropped:', self.total_drops)
+        print('Total client get()/put() requests: %i/%i' % (self.total_get, self.total_put))
+        print('Total duplicate responses:', self.duplicates)
+        print('Total unanswered get()/put() requests: %i/%i' % (self.unanswered_get, self.unanswered_put))
+        print('Total redirects:', self.redirects)
+        print('Total get()/put() failures: %i/%i' % (self.failed_get, self.failed_put))
+        print('Total get() with incorrect response:', self.incorrect)
         if len(self.latencies) > 0:
-            print 'Mean/Median query latency: %fsec/%fsec' % (float(sum(self.latencies))/len(self.latencies),
-                                                              self.latencies[len(self.latencies)/2])
+            print('Mean/Median query latency: %fsec/%fsec' % (float(sum(self.latencies))/len(self.latencies),
+                                                              self.latencies[len(self.latencies)/2]))
 
 
 #######################################################################################################
@@ -253,7 +253,7 @@ class Client:
                 'type': 'put', 'MID': mid, 'key': key, 'value': value}
 
     def finalize(self):
-        for req in self.reqs.itervalues():
+        for req in self.reqs.values():
             if req.get: self.sim.stats.unanswered_get += 1
             else: self.sim.stats.unanswered_put += 1
 
@@ -261,7 +261,7 @@ class Client:
         # create a get message, if possible
         if get:
             if len(self.items) > 0:
-                return self.__create_get__(random.choice(self.items.keys()))
+                return self.__create_get__(random.choice(list(self.items.keys())))
             else:
                 self.sim.stats.failed_to_generate_get += 1
 
@@ -270,7 +270,7 @@ class Client:
             k = self.__get_rand_str__(size=32)
             v = hashlib.md5(k).hexdigest()
         else:
-            k = random.choice(self.items.keys())
+            k = random.choice(list(self.items.keys()))
             v = hashlib.md5(self.items[k]).hexdigest()
         return self.__create_put__(k, v)
 
@@ -372,7 +372,7 @@ class Replica:
                 self.client_sock.send(raw_msg)
                 return True
             except:
-                print '*** Simulator Error - Unable to send to replica'
+                print('*** Simulator Error - Unable to send to replica')
                 self.shutdown()
         return False
 
@@ -399,7 +399,7 @@ class Simulation:
         # Create the clients
         self.cids = set()
         self.clients = {}
-        for i in xrange(self.conf.replicas + 16, self.conf.replicas + 16 + NUM_CLIENTS):
+        for i in range(self.conf.replicas + 16, self.conf.replicas + 16 + NUM_CLIENTS):
             cid = ('%04x' % (i)).upper()
             self.cids.add(cid)
             self.clients[cid] = Client(self, cid)
@@ -407,7 +407,7 @@ class Simulation:
         # Create the sockets and the replicas
         self.rids = set()
         self.replicas = {}
-        for i in xrange(self.conf.replicas):
+        for i in range(self.conf.replicas):
             rid = ('%04x' % (i)).upper()
             self.rids.add(rid)
             self.replicas[rid] = Replica(rid)
@@ -415,7 +415,7 @@ class Simulation:
         self.living_rids = self.rids.copy()
 
     def run(self):
-        for r in self.replicas.itervalues():
+        for r in self.replicas.values():
             r.run(self.rids, self.silence)
 
         # initialize the clock and create all the get(), put(), and kill() events
@@ -430,7 +430,7 @@ class Simulation:
             # populate the list of living sockets
             sockets = []
             listen_socks = set()
-            for r in self.replicas.itervalues():
+            for r in self.replicas.values():
                 if r.listen_sock:
                     sockets.append(r.listen_sock)
                     listen_socks.add(r.listen_sock)
@@ -450,19 +450,19 @@ class Simulation:
                 self.events.pop(0)[1]()
 
         if self.stats.total_msgs >= self.conf.max_packets:
-            print "*** Simulator Error - Replicas sent too many packets (>%i), possible packet storm" % (self.conf.max_packets)
+            print("*** Simulator Error - Replicas sent too many packets (>%i), possible packet storm" % (self.conf.max_packets))
 
         self.stats.died = len(self.rids) - len(self.living_rids) - self.stats.killed
 
         # Finish out the clients. All unanswered requests are considered failures
-        for client in self.clients.itervalues():
+        for client in self.clients.values():
             client.finalize()
 
         # Finish calculating the statistics
         self.stats.finalize()
 
     def shutdown(self):
-        for r in self.replicas.itervalues():
+        for r in self.replicas.values():
             try: r.shutdown()
             except: pass
 
@@ -476,13 +476,13 @@ class Simulation:
         if self.leader != 'FFFF':
             self.__kill_replica__(self.replicas[self.leader])
             self.leader = 'FFFF'
-            for client in self.clients.itervalues(): client.forget()
+            for client in self.clients.values(): client.forget()
 
     def __kill_non_leader__(self):
         if len(self.living_rids) > 1:
             self.__kill_replica__(self.replicas[random.choice(list(self.living_rids - set([self.leader])))])
         else:
-            print '*** Simulator Error - too few living replicas to kill another (%i)' % (len(self.living_rids))
+            print('*** Simulator Error - too few living replicas to kill another (%i)' % (len(self.living_rids)))
 
     def __partition__(self, add_leader=False):
         qsize = len(self.replicas) / 2 + 1
@@ -495,7 +495,7 @@ class Simulation:
             qsize -= 1
         else:
             self.leader = 'FFFF'
-            for client in self.clients.itervalues(): client.forget()
+            for client in self.clients.values(): client.forget()
 
         for i in range(qsize):
             rid = random.choice(r)
@@ -518,13 +518,13 @@ class Simulation:
         return False
 
     def __send_get__(self):
-        client = random.choice(self.clients.values())
+        client = random.choice(list(self.clients.values()))
         msg = client.create_req(True)
         if msg['dst']:
             self.__replica_deliver__(self.replicas[msg['dst']], json.dumps(msg))
 
     def __send_put__(self):
-        client = random.choice(self.clients.values())
+        client = random.choice(list(self.clients.values()))
         msg = client.create_req(False)
         if msg['dst']:
             self.__replica_deliver__(self.replicas[msg['dst']], json.dumps(msg))
@@ -539,7 +539,7 @@ class Simulation:
         # Generate get() and put() events for the event queue
         t = clock
         delta = float(self.conf.lifetime - self.conf.start_wait - self.conf.end_wait) / self.conf.requests
-        for i in xrange(self.conf.requests):
+        for i in range(self.conf.requests):
             if random.random() < self.conf.mix:
                 self.stats.generated_get += 1
                 self.events.append((t, self.__send_get__))
@@ -562,7 +562,7 @@ class Simulation:
                 bisect.insort(self.events, (event['time'] + clock, self.__partition_end__))
 
     def __validate_addr__(self, addr):
-        if type(addr) not in [str, unicode] or len(addr) != 4: return False
+        if type(addr) not in [str, str] or len(addr) != 4: return False
         try:
             i = int(addr, 16)
         except:
@@ -627,7 +627,7 @@ class Simulation:
         # is this message a broadcast?
         elif msg['dst'] == 'FFFF':
             self.stats.total_msgs += len(self.replicas) - 1
-            for rid, r in self.replicas.iteritems():
+            for rid, r in self.replicas.items():
                 if rid != msg['src']:
                     if self.__check_partition__(msg['src'], rid) and random.random() >= self.conf.drops:
                         self.__replica_deliver__(r, raw_msg)
@@ -646,13 +646,13 @@ class Simulation:
 
     def __accept__(self, sock):
         client = sock.accept()[0]
-        for r in self.replicas.itervalues():
+        for r in self.replicas.values():
             if r.listen_sock == sock:
                 r.client_sock = client
                 break
 
     def __close_replica__(self, sock):
-        for r in self.replicas.itervalues():
+        for r in self.replicas.values():
             if r.client_sock == sock:
                 if r.rid in self.living_rids:
                     self.living_rids.remove(r.rid)
@@ -725,7 +725,7 @@ class Simulation:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print 'Usage: $ %s <config file>' % (sys.argv[0])
+        print('Usage: $ %s <config file>' % (sys.argv[0]))
         sys.exit()
 
     sim = Simulation(sys.argv[1], False)
@@ -748,7 +748,7 @@ if __name__ == "__main__":
 
     if passed:
         bold("\n## Performance Tests")
-        print "## <test metric>: <your score> <benchmark score>, <test result>"
+        print("## <test metric>: <your score> <benchmark score>, <test result>")
         sim.performance_tests()
     else:
-        print '\n## Correctness Checks Failed, Skipping Performance Tests'
+        print('\n## Correctness Checks Failed, Skipping Performance Tests')
