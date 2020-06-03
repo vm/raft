@@ -4,7 +4,7 @@ import sys, os, time, json, socket, select, random, subprocess, string, hashlib,
 
 VERSION = "0.7"
 
-REPLICA_PROG = './3700kvstore'
+REPLICA_PROG = '../3700kvstore'
 NUM_CLIENTS = 8
 
 MAX_GET_FRAC = 0.5
